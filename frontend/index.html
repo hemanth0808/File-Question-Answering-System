@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File QA System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>File Question Answering System</h1>
+
+        <div class="upload-section">
+            <h2>Upload a File</h2>
+            <div class="drop-area" id="dropArea">
+                <p>Drag & drop files here or click to browse</p>
+                <input type="file" id="fileInput" accept=".pdf,.csv,.json,.txt">
+            </div>
+            <div id="fileInfo"></div>
+        </div>
+
+        <div class="model-toggle">
+            <label class="switch">
+                <input type="checkbox" id="modelToggle" checked>
+                <span class="slider round"></span>
+            </label>
+            <span class="model-label">Use OpenAI</span>
+        </div>
+
+        <div class="chat-section">
+            <h2>Ask Questions</h2>
+            <div id="chatContainer">
+                <div id="chatMessages"></div>
+                <div class="input-area">
+                    <input type="text" id="questionInput" placeholder="Ask a question about the file...">
+                    <button id="askButton">Ask</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

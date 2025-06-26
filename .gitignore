@@ -1,0 +1,105 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+ENV/
+env/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Build and distribution files
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+coverage.xml
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Frontend dependencies
+node_modules/
+
+# Frontend build files
+/dist/
+/frontend/dist/
+/frontend/node_modules/
+
+# Local development files
+*.log
+*.sqlite
+*.sqlite3
+
+# Uploaded files (your uploads directory)
+/backend/uploads/
+/uploads/
+!uploads/.gitkeep  # Keep empty directory structure
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python cache
+.python-version
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Model files (if using local models)
+*.bin
+*.gguf
+*.h5
+*.pt
+*.pth
+
+# Hugging Face cache
+.cache/
+.huggingface/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System files
+*.bak
+*.tmp
+*.temp
