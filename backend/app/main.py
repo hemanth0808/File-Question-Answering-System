@@ -1,5 +1,4 @@
 import os
-import aiohttp
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import openai
@@ -43,6 +42,8 @@ else:
     OPENAI_ENABLED = False
     print("OpenAI API key not found. Using Hugging Face models only.")
 
+client = openai.AsyncOpenAI(api_key=config.OPENAI_API_KEY)
+
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
 class QuestionRequest(BaseModel):
@@ -78,6 +79,7 @@ async def ask_question(request: QuestionRequest):
 
         # Use OpenAI if requested and API key is available
         if request.use_openai and OPENAI_ENABLED:
+            
             response = await ask_openai(request.question, context)
             return response
         elif request.use_openai and not OPENAI_ENABLED:
@@ -97,10 +99,11 @@ async def ask_question(request: QuestionRequest):
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 async def ask_openai(question: str, context: str):
-    """Handle questions using OpenAI API"""
+    """Handle questions using OpenAI API (modern version)"""
     try:
+        # Prepare the prompt (same as before)
         prompt = f"""Answer the question based on the context below. Keep answers concise.
         If the question can't be answered from the context, say "I don't know".
 
@@ -109,17 +112,16 @@ async def ask_openai(question: str, context: str):
         Question: {question}
         Answer:"""
         
-        async with aiohttp.ClientSession() as session:
-            openai.aiosession.set(session)
-            response = await openai.ChatCompletion.acreate(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You answer questions based on provided context."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=500
-            )
+        # Make the API call (new syntax)
+        response = await client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You answer questions based on provided context."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3,
+            max_tokens=500
+        )
         
         return {
             "answer": response.choices[0].message.content.strip(),
@@ -127,8 +129,49 @@ async def ask_openai(question: str, context: str):
             "model": "gpt-3.5-turbo",
             "service": "openai"
         }
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"OpenAI error: {str(e)}")
+        # More specific error handling
+        error_msg = f"OpenAI error: {str(e)}"
+        if "authentication" in str(e).lower():
+            error_msg = "Invalid OpenAI API key"
+        elif "rate limit" in str(e).lower():
+            error_msg = "Rate limit exceeded"
+        raise HTTPException(
+            status_code=500,
+            detail=error_msg
+        )    
+# async def ask_openai(question: str, context: str):
+#     """Handle questions using OpenAI API"""
+#     try:
+#         prompt = f"""Answer the question based on the context below. Keep answers concise.
+#         If the question can't be answered from the context, say "I don't know".
+
+#         Context: {context[:15000]}
+
+#         Question: {question}
+#         Answer:"""
+        
+#         async with aiohttp.ClientSession() as session:
+#             openai.aiosession.set(session)
+#             response = await openai.ChatCompletion.acreate(
+#                 model="gpt-3.5-turbo",
+#                 messages=[
+#                     {"role": "system", "content": "You answer questions based on provided context."},
+#                     {"role": "user", "content": prompt}
+#                 ],
+#                 temperature=0.3,
+#                 max_tokens=500
+#             )
+        
+#         return {
+#             "answer": response.choices[0].message.content.strip(),
+#             "confidence": 1.0,
+#             "model": "gpt-3.5-turbo",
+#             "service": "openai"
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"OpenAI error: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
